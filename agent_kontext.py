@@ -25,7 +25,7 @@ while True:
     historik.append({"role": "user", "content": fråga})
     
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-5.4-mini",
         messages=historik
     )
     
