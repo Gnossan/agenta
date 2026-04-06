@@ -265,6 +265,8 @@ def index():
     <input type="text" id="msg" placeholder="Skriv något..." />
     <button onclick="send()">Skicka</button>
     <script>
+        const sessionId = Math.random().toString(36).substring(2);
+        
         async function send() {
             const msg = document.getElementById("msg").value;
             if (!msg) return;
@@ -273,7 +275,7 @@ def index():
             const res = await fetch("chat", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({message: msg})
+                body: JSON.stringify({message: msg, session_id: sessionId})
             });
             const data = await res.json();
             document.getElementById("chat").innerHTML += '<p class="ai">' + data.reply + '</p>';
@@ -287,27 +289,28 @@ def index():
 </html>
 """
 @app.route("/chat", methods=["POST"])
-@app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json()
     user_message = data.get("message", "")
-    logging.error(f"Chat anrop: {user_message}")
+    session_id = data.get("session_id", "default")
     try:
-        answer = ask_ai(user_message, conversation_history)
-        conversation_history.append({"role": "user", "content": user_message})
-        conversation_history.append({"role": "assistant", "content": answer})
-        logging.error(f"Svar: {answer}")
+        if session_id not in sessions:
+            sessions[session_id] = []
+        session_history = sessions[session_id]
+        answer = ask_ai(user_message, session_history)
+        session_history.append({"role": "user", "content": user_message})
+        session_history.append({"role": "assistant", "content": answer})
         return {"reply": answer}
     except Exception as e:
         logging.error(f"Fel i chat: {e}")
         return {"reply": "Ett fel uppstod"}, 500
-
 # ─────────────────────────────────────────
 # Start
 # ─────────────────────────────────────────
 if __name__ == "__main__":
     save_device_context()
     conversation_history = []
+    sessions = {}
     
     in_container = os.path.exists("/data/options.json")
     
