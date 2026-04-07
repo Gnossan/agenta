@@ -1,5 +1,7 @@
 # Release Notes
 
+## v0.3.2 - Change of AI-model
+claude-haiku-4-5-20251001
 ## v0.3.0 — Session Management
 *2026-04-06*
 
