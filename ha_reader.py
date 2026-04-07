@@ -181,7 +181,7 @@ def ask_ai(user_message, user_history=[]):
     messages = list(user_history) + [{"role": "user", "content": user_message}]
 
     response = client.messages.create(
-        model="claude-sonnet-4-5",
+        model="claude-haiku-4-5-20251001",
         max_tokens=1024,
         system=system_prompt,
         tools=TOOLS,
@@ -212,7 +212,7 @@ def ask_ai(user_message, user_history=[]):
 
         # Skicka tillbaka resultaten till Claude
         second_response = client.messages.create(
-            model="claude-sonnet-4-5",
+            model="claude-haiku-4-5-20251001",
             max_tokens=1024,
             system=system_prompt,
             tools=TOOLS,
